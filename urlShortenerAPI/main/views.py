@@ -2,8 +2,7 @@ from django.shortcuts import redirect
 from rest_framework import generics
 from rest_framework import mixins
 from .serializers import URLShortenerSerializer
-from random import choice
-from string import ascii_letters
+from .common.utils.utils import create_shortened_url
 from .models import URL
 from rest_framework.response import Response
 from rest_framework import status
@@ -33,7 +32,7 @@ class URLShortenerApiView(generics.GenericAPIView, mixins.ListModelMixin, mixins
         return self.list(request)
 
     def post(self, request):
-        slug = "http://localhost:8000/" + ''.join(choice(ascii_letters) for x in range(10))
+        slug = create_shortened_url(URL)
         serializer = self.get_serializer(data={"url": request.data['url'], "slug": slug})
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
